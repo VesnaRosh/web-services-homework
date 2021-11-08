@@ -1,17 +1,15 @@
 const model = require('../pkg/cars/mongo');
+const validate = require('../pkg/cars/validator');
 
 
 const addCar = async (req, res) => {
   try {
-    let condition = !req.body.name
-      || !req.body.manufacturer
-      || !req.body.year
-      || !req.body.class
-      || !req.body.engine
-      || !req.body.gear;
-    if (condition) {
-      return res.status(400).send('Bad request');
-    }
+    await validate(req.body);
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send(err);
+  }
+  try {
     let car = await model.addCar(req.body);
     res.status(201).send(car);
   } catch (err) {
@@ -47,15 +45,12 @@ const getCar = async (req, res) => {
 
 const updateCar = async (req, res) => {
   try {
-    let condition = !req.body.name
-      || !req.body.manufacturer
-      || !req.body.year
-      || !req.body.class
-      || !req.body.engine
-      || !req.body.gear;
-    if (condition) {
-      return res.status(400).send('Bad request');
-    }
+    await validate(req.body);
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send(err);
+  }
+  try {
     let car = await model.updateCar(req.params.id, req.body);
     if (car === false) {
       return res.status(404).send('Not found');
@@ -69,15 +64,12 @@ const updateCar = async (req, res) => {
 
 const partialUpdate = async (req, res) => {
   try {
-    let condition = req.body.name
-      || req.body.manufacturer
-      || req.body.year
-      || req.body.class
-      || req.body.engine
-      || req.body.gear;
-    if (!condition) {
-      return res.status(400).send('Bad request');
-    }
+    await validate(req.body, 'UPDATE');
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send(err);
+  }
+  try {
     let car = await model.partialUpdate(req.params.id, req.body);
     if (car === false) {
       return res.status(404).send('Not found');

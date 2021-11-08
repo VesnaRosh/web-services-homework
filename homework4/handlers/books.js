@@ -1,17 +1,15 @@
 const books = require('../pkg/books/mongo');
+const validate = require('../pkg/books/validator');
 
 
 const addBook = async (req, res) => {
   try {
-    let condition = !req.body.name
-      || !req.body.author
-      || !req.body.genre
-      || !req.body.publisher
-      || !req.body.year
-      || !req.body.language;
-    if (condition) {
-      return res.status(400).send('Bad request');
-    }
+    await validate(req.body);
+  } catch (err) {
+    console.log(err)
+    return res.status(400).send(err);
+  }
+  try {
     let book = await books.addBook(req.body);
     res.status(201).send(book);
   } catch (err) {
@@ -47,10 +45,12 @@ const getBook = async (req, res) => {
 
 const updateBook = async (req, res) => {
   try {
-    let condition = !req.body.name || !req.body.author || !req.body.genre || !req.body.publisher || !req.body.year || !req.body.language;
-    if (condition) {
-      return res.status(400).send('Bad request');
-    }
+    await validate(req.body);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send(err);
+  }
+  try {
     let book = await books.updateBook(req.params.id, req.body);
     if (book === false) {
       return res.status(404).send('Not found');
@@ -64,10 +64,12 @@ const updateBook = async (req, res) => {
 
 const partialUpdate = async (req, res) => {
   try {
-    let condition = req.body.name || req.body.author || req.body.genre || req.body.publisher || req.body.year || req.body.language;
-    if (!condition) {
-      return res.status(400).send('Bad request');
-    }
+    await validate(req.body, 'UPDATE');
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send(err);
+  }
+  try {
     let book = await books.partialUpdate(req.params.id, req.body);
     if (book === false) {
       return res.status(404).send('Not found');
