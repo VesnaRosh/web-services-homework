@@ -1,0 +1,19 @@
+{
+  "db": {
+    "username": "",
+    "password": "",
+    "dbname": "",
+    "host": ""
+  },
+  "security": {
+    "algorithms": [
+      "HS256"
+    ],
+    "secret": ""
+  },
+  "mailer": {
+    "key": "",
+    "domain": "",
+    "default_address": ""
+  }
+}
